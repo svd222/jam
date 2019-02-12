@@ -15,7 +15,6 @@ return [
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-api',
-            'application/json' => 'yii\web\JsonParser',
         ],
         'user' => [
             'identityClass' => 'common\models\User',
