@@ -36,14 +36,32 @@ return [
         'errorHandler' => [
             'errorAction' => 'site/error',
         ],
-        /*
         'urlManager' => [
+            'baseUrl' => '/',
+            'enableStrictParsing' => true,
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-            ],
+                /*[
+                    'pattern' => '',
+                    'route' => '/project/index',
+                ],*/
+                [
+                    'pattern' => '<controller:[\w-]+>/<id:\d+>',
+                    'route' => '<controller>/view',
+                ],
+                [
+                    'pattern' => '<controller:[\w0-9-]+>/<action:[\w0-9-]+>',
+                    'route' => '<controller>/<action>',
+                ],
+            ]
         ],
-        */
+
+    ],
+    'modules' => [
+        'gridview' =>  [
+            'class' => '\kartik\grid\Module'
+        ]
     ],
     'params' => $params,
 ];

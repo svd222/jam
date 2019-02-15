@@ -16,6 +16,15 @@ return [
         'request' => [
             'csrfParam' => '_csrf-api',
         ],
+        'response' => [
+            'formatters' => [
+                \yii\web\Response::FORMAT_JSON => [
+                    'class' => 'yii\web\JsonResponseFormatter',
+                    'prettyPrint' => YII_DEBUG, // используем "pretty" в режиме отладки
+                    'encodeOptions' => JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE,
+                ],
+            ],
+        ],
         'user' => [
             'identityClass' => 'common\models\User',
             'enableAutoLogin' => true,
@@ -30,7 +39,7 @@ return [
             'targets' => [
                 [
                     'class' => 'yii\log\FileTarget',
-                    'levels' => ['error', 'warning'],
+                    'levels' => ['error', 'warning', 'info', 'trace'],
                 ],
             ],
         ],
@@ -42,10 +51,24 @@ return [
             'enableStrictParsing' => true,
             'showScriptName' => false,
             'rules' => [
-                ['class' => 'yii\rest\UrlRule', 'controller' => 'station'],
-                ['class' => 'yii\rest\UrlRule', 'controller' => 'ticket'],
-                ['class' => 'yii\rest\UrlRule', 'controller' => 'carrier'],
-                ['class' => 'yii\rest\UrlRule', 'controller' => 'schedule'],
+                ['class' => 'yii\rest\UrlRule', 'controller' => 'station',
+                    'pluralize'=>false,
+                    'extraPatterns' => [
+                        'GET /get-list' => 'getList'
+                    ]
+                ],
+                ['class' => 'yii\rest\UrlRule', 'controller' => 'carrier',
+                    'pluralize'=>false,
+                    'extraPatterns' => [
+                        'GET /get-list' => 'getList'
+                    ]
+                ],
+                ['class' => 'yii\rest\UrlRule', 'controller' => 'schedule',
+                    'pluralize'=>false,
+                    'extraPatterns' => [
+                        'GET /get-days' => 'getDays'
+                    ]
+                ],
             ],
         ],
     ],
