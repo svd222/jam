@@ -1,60 +1,161 @@
-<p align="center">
-    <a href="https://github.com/yiisoft" target="_blank">
-        <img src="https://avatars0.githubusercontent.com/u/993323" height="100px">
-    </a>
-    <h1 align="center">Yii 2 Advanced Project Template</h1>
-    <br>
-</p>
+# INSTALLATION #
 
-Yii 2 Advanced Project Template is a skeleton [Yii 2](http://www.yiiframework.com/) application best for
-developing complex Web applications with multiple tiers.
+$ sudo mkdir -m 0755 /var/www/jam && cd jam
 
-The template includes three tiers: front end, back end, and console, each of which
-is a separate Yii application.
+$ git clone https://github.com/svd222/jam.git .
 
-The template is designed to work in a team development environment. It supports
-deploying the application in different environments.
+$ composer install
 
-Documentation is at [docs/guide/README.md](docs/guide/README.md).
+$ php init
 
-[![Latest Stable Version](https://img.shields.io/packagist/v/yiisoft/yii2-app-advanced.svg)](https://packagist.org/packages/yiisoft/yii2-app-advanced)
-[![Total Downloads](https://img.shields.io/packagist/dt/yiisoft/yii2-app-advanced.svg)](https://packagist.org/packages/yiisoft/yii2-app-advanced)
-[![Build Status](https://travis-ci.org/yiisoft/yii2-app-advanced.svg?branch=master)](https://travis-ci.org/yiisoft/yii2-app-advanced)
+open api/config/main-local.php & change `cookieValidationKey` param of `request` component to random string
 
-DIRECTORY STRUCTURE
--------------------
+## NGINX Configuration ##
 
-```
-common
-    config/              contains shared configurations
-    mail/                contains view files for e-mails
-    models/              contains model classes used in both backend and frontend
-    tests/               contains tests for common classes    
-console
-    config/              contains console configurations
-    controllers/         contains console controllers (commands)
-    migrations/          contains database migrations
-    models/              contains console-specific model classes
-    runtime/             contains files generated during runtime
-backend
-    assets/              contains application assets such as JavaScript and CSS
-    config/              contains backend configurations
-    controllers/         contains Web controller classes
-    models/              contains backend-specific model classes
-    runtime/             contains files generated during runtime
-    tests/               contains tests for backend application    
-    views/               contains view files for the Web application
-    web/                 contains the entry script and Web resources
-frontend
-    assets/              contains application assets such as JavaScript and CSS
-    config/              contains frontend configurations
-    controllers/         contains Web controller classes
-    models/              contains frontend-specific model classes
-    runtime/             contains files generated during runtime
-    tests/               contains tests for frontend application
-    views/               contains view files for the Web application
-    web/                 contains the entry script and Web resources
-    widgets/             contains frontend widgets
-vendor/                  contains dependent 3rd-party packages
-environments/            contains environment-based overrides
-```
+
+#### api.jam.local nginx config example (Assume that project is on this path: /var/www/jam) ####
+
+````
+server {
+	listen 80;
+
+	sendfile        on;
+	keepalive_timeout  65;
+    	gzip  on;
+    	gzip_min_length 1024;
+    	gzip_buffers 12 32k;
+    	gzip_comp_level 9;
+    	gzip_proxied any;
+	gzip_types	text/plain application/xml text/css text/js text/xml application/x-javascript text/javascript application/javascript application/json application/xml+rss;
+	
+	server_name api.jam.local;
+	root /var/www/jam/api/web;
+
+	access_log /var/www/jam/api/access.log;
+	error_log /var/www/jam/api/error.log;
+
+	charset utf-8;
+		
+	location / {
+            add_header 'Access-Control-Allow-Origin' '*';
+	    root /var/www/jam/api/web/;
+	    index index.php;
+	    try_files $uri $uri/ /index.php?$args;
+	}
+
+    	location ~ \.php$ {
+		add_header Access-Control-Allow-Origin *;
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+		
+		root /var/www/jam/api/web/;
+
+		try_files $uri $uri/ =404;
+		fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+		fastcgi_index index.php;
+		include fastcgi_params;
+		fastcgi_param                   SCRIPT_FILENAME $document_root$fastcgi_script_name;
+
+
+	    	fastcgi_param QUERY_STRING    $query_string;
+	    	fastcgi_param REQUEST_METHOD  $request_method;
+	    	fastcgi_param CONTENT_TYPE    $content_type;
+	    	fastcgi_param CONTENT_LENGTH  $content_length;
+		fastcgi_param  PATH_INFO $fastcgi_path_info;
+    	}
+
+}
+````
+
+#### jam.local nginx config example (Assume that project is on this path: /var/www/jam) ####
+
+````
+server {
+	listen 80;
+
+	sendfile        on;
+	keepalive_timeout  65;
+    	gzip  on;
+    	gzip_min_length 1024;
+    	gzip_buffers 12 32k;
+    	gzip_comp_level 9;
+    	gzip_proxied any;
+	gzip_types	text/plain application/xml text/css text/js text/xml application/x-javascript text/javascript application/javascript application/json application/xml+rss;
+	
+	server_name jam.local;
+	root /var/www/jam/frontend/web;
+
+	access_log /var/www/jam/frontend/access.log;
+	error_log /var/www/jam/frontend/error.log;
+
+	charset utf-8;
+
+	location / {
+	    root /var/www/jam/frontend/web/;
+	    index index.php;
+	    try_files $uri $uri/ /index.php?$args;
+	}
+
+    	location ~ \.php$ {
+		fastcgi_split_path_info ^(.+\.php)(/.+)$;
+		
+		root /var/www/jam/frontend/web/;
+
+		try_files $uri $uri/ =404;
+		fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+		fastcgi_index index.php;
+		include fastcgi_params;
+		fastcgi_param                   SCRIPT_FILENAME $document_root$fastcgi_script_name;
+
+
+	    	fastcgi_param QUERY_STRING    $query_string;
+	    	fastcgi_param REQUEST_METHOD  $request_method;
+	    	fastcgi_param CONTENT_TYPE    $content_type;
+	    	fastcgi_param CONTENT_LENGTH  $content_length;
+		fastcgi_param  PATH_INFO $fastcgi_path_info;
+    	}
+
+}
+````
+$ sudo ln -s /etc/nginx/sites-available/jam.local /etc/nginx/sites-enabled/jam.local
+
+$ sudo ln -s /etc/nginx/sites-available/api.jam.local /etc/nginx/sites-enabled/api.jam.local
+
+$ sudo service nginx restart
+
+#### /etc/hosts ####
+
+````
+127.0.0.1	api.jam.local
+127.0.0.1	jam.local
+````
+
+## Database ##
+
+Create two mysql databases, i.e. jam & jam.local
+
+````
+'components' => [
+        ...
+        'db' => [
+            'class' => 'yii\db\Connection',
+            'dsn' => 'mysql:host=localhost;dbname=jam',
+            'username' => 'root',
+            'password' => 'svd',
+            'charset' => 'utf8',
+        ],
+        ...
+]        
+````
+
+then Change appropriate config in `common/config/main-local.php` for real DB
+ & `common/config/test-local.php` for test DB
+ 
+ ## HOW TO USE ##
+ 
+ main entry point http://jam.local 
+ 
+ ## RUN TESTS ##
+ 
+ cd /var/www/jam/common
+ 
+ $ ../vendor/bin/codecept run unit
