@@ -42,10 +42,10 @@ return [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
-                /*[
+                [
                     'pattern' => '',
-                    'route' => '/project/index',
-                ],*/
+                    'route' => '/schedule/index',
+                ],
                 [
                     'pattern' => '<controller:[\w-]+>/<id:\d+>',
                     'route' => '<controller>/view',

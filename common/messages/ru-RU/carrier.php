@@ -1,4 +1,4 @@
 <?php
 return [
-
+    'Carrier' => 'Перевозчик',
 ];
