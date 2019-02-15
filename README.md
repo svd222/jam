@@ -138,9 +138,9 @@ Create two mysql databases, i.e. jam & jam.local
         ...
         'db' => [
             'class' => 'yii\db\Connection',
-            'dsn' => 'mysql:host=localhost;dbname=jam',
-            'username' => 'root',
-            'password' => 'svd',
+            'dsn' => 'mysql:host=localhost;dbname=DB_NAME',
+            'username' => 'USER',
+            'password' => 'PASSWORD',
             'charset' => 'utf8',
         ],
         ...
