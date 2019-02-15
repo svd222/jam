@@ -156,6 +156,6 @@ then Change appropriate config in `common/config/main-local.php` for real DB
  
  ## RUN TESTS ##
  
- cd /var/www/jam/common
+ $ cd /var/www/jam/common
  
  $ ../vendor/bin/codecept run unit
